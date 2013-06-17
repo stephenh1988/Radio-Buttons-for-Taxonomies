@@ -8,8 +8,6 @@ Github: https://github.com/aMoniker
 
 This is a class implementation of the wp.tuts+ tutorial: http://wp.tutsplus.com/tutorials/creative-coding/how-to-use-radio-buttons-with-taxonomies/
 
-It's been updated to allow for multiple uses.
-
 To use it, include it in your functions.php (or somewhere in your plugin)
 If you add it to your theme, also add the javascript file to your theme’s js folder (call it radiotax.js)
 If you add it to your plugin, pass 'script_src' as an additional argument, which should point to the radiotax.js file.
