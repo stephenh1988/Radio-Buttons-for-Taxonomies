@@ -30,8 +30,11 @@ class WordPress_Radio_Taxonomy {
     public $post_type = '';
     public $script_src = '';
 
+    private static $script_vars = array('slugs' => array());
+
     public function __construct($taxonomy, $args = array()) {
         $this->taxonomy = $taxonomy;
+        static::$script_vars['slugs'][] = $taxonomy;
 
         $this->taxonomy_metabox_id = isset($args['taxonomy_metabox_id'])
                                    ? $args['taxonomy_metabox_id']
@@ -125,15 +128,15 @@ class WordPress_Radio_Taxonomy {
             <p id="<?php echo $taxonomy; ?>-add" class="">
                 <label class="screen-reader-text" for="new<?php echo $taxonomy; ?>"><?php echo $tax->labels->add_new_item; ?></label>
                 <input type="text" name="new<?php echo $taxonomy; ?>" id="new<?php echo $taxonomy; ?>" class="form-required form-input-tip" value="<?php echo esc_attr( $tax->labels->new_item_name ); ?>" tabindex="3" aria-required="true">
-                <input type="button" id="" class="radio-tax-add button" value="<?php echo esc_attr($tax->labels->add_new_item); ?>" tabindex="3">
-                <?php wp_nonce_field( 'radio-tax-add-'.$taxonomy, '_wpnonce_radio-add-tag', false ); ?>
+                <input type="button" id="<?php echo $taxonomy; ?>-add" class="radio-tax-add button" value="<?php echo esc_attr($tax->labels->add_new_item); ?>" tabindex="3">
+                <?php wp_nonce_field('radio-tax-add-'.$taxonomy, '_wpnonce_radio-add-tag', false ); ?>
             </p>
         </div><?php
     }
 
     public function admin_script() {
         wp_register_script('radiotax', $this->script_src, array('jquery'), null, true);
-        wp_localize_script('radiotax', 'radio_tax', array('slug' => $this->taxonomy));
+        wp_localize_script('radiotax', 'radio_tax', static::$script_vars);
         wp_enqueue_script('radiotax');
     }
 
@@ -156,7 +159,7 @@ class WordPress_Radio_Taxonomy {
         $id = $taxonomy . '-' . $tag->term_id;
         $name = "tax_input[$taxonomy]";
         $value = 'value="' .(is_taxonomy_hierarchical($taxonomy) ? $tag->term_id : $term->tag_slug). '"';
-        $html ='<li id="'.$id.'"><label class="selectit"><input type="radio" id="in-'.$id.'" name="'.$name.'" '.$value.'>'. $tag->name.'</label></li>';
+        $html ='<li id="'.$id.'"><label class="selectit"><input type="radio" id="in-'.$id.'" name="'.$name.'" '.$value.'>&nbsp;'. $tag->name.'</label></li>';
     
         echo json_encode(array('term' => $tag->term_id, 'html' => $html));
         exit();
