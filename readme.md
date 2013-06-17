@@ -13,7 +13,7 @@ Once you've included it, simply call:
 new WordPress_Radio_Taxonomy('taxonomy_name', array(
      'post_type'              => 'your_post_type'           // defaults to 'post'
     ,'taxonomy_metabox_id'    => 'custom_metabox_id'        // usually not necessary to set
-    ,'taxonomy_metabox_title' => 'Your Metabox Title'       // defaults to ucwords('taxonomy_name')
+    ,'taxonomy_metabox_title' => 'Your Metabox Title'       // defaults to the capitalized taxonomy_name (sans underscores)
     ,'script_src'             => '/path/to/the/radiotax.js' // defaults to your theme's js directory
 ));
 ```
