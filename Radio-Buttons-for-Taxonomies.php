@@ -5,11 +5,11 @@ Github: https://github.com/stephenh1988
 
 This is a class implementation of the wp.tuts+ tutorial: http://wp.tutsplus.com/tutorials/creative-coding/how-to-use-radio-buttons-with-taxonomies/
 
-To use it, just add to your functions.php and add the javascript file to your theme’s js folder (call it radiotax.js). 
+To use it, just add to your functions.php and add the javascript file to your theme’s js folder (call it radiotax.js).
 
 Better still, make make a plug-in out of it, including the javascript file, and being sure to point the wp_register_script to radiotax.js in your plug-in folder.
 
-The class constants are 
+The class constants are
   - taxonomy: the taxonomy slug
   - taxonomy_metabox_id: the ID of the original taxonomy metabox
   - post type - the post type the metabox appears on
@@ -21,11 +21,11 @@ class WordPress_Radio_Taxonomy {
 	static $post_type= 'post';
 
 	public function load(){
-		//Remove old taxonomy meta box  
-		add_action( 'admin_menu', array(__CLASS__,'remove_meta_box'));  
+		//Remove old taxonomy meta box
+		add_action( 'admin_menu', array(__CLASS__,'remove_meta_box'));
 
-		//Add new taxonomy meta box  
-		add_action( 'add_meta_boxes', array(__CLASS__,'add_meta_box'));  
+		//Add new taxonomy meta box
+		add_action( 'add_meta_boxes', array(__CLASS__,'add_meta_box'));
 
 		//Load admin scripts
 		add_action('admin_enqueue_scripts',array(__CLASS__,'admin_script'));
@@ -35,35 +35,35 @@ class WordPress_Radio_Taxonomy {
 	}
 
 
-	public static function remove_meta_box(){  
-   		remove_meta_box(static::$taxonomy_metabox_id, static::$post_type, 'normal');  
-	} 
+	public static function remove_meta_box(){
+   		remove_meta_box(static::$taxonomy_metabox_id, static::$post_type, 'normal');
+	}
 
 
-	public function add_meta_box() {  
-		add_meta_box( 'mytaxonomy_id', 'My Radio Taxonomy',array(__CLASS__,'metabox'), static::$post_type ,'side','core');  
-	}  
-        
+	public function add_meta_box() {
+		add_meta_box( 'mytaxonomy_id', 'My Radio Taxonomy',array(__CLASS__,'metabox'), static::$post_type ,'side','core');
+	}
 
-	//Callback to set up the metabox  
-	public static function metabox( $post ) {  
-		//Get taxonomy and terms  
+
+	//Callback to set up the metabox
+	public static function metabox( $post ) {
+		//Get taxonomy and terms
        	 $taxonomy = self::$taxonomy;
-      
-       	 //Set up the taxonomy object and get terms  
-       	 $tax = get_taxonomy($taxonomy);  
-       	 $terms = get_terms($taxonomy,array('hide_empty' => 0));  
-      
-       	 //Name of the form  
-       	 $name = 'tax_input[' . $taxonomy . ']';  
-      
-       	 //Get current and popular terms  
-       	 $popular = get_terms( $taxonomy, array( 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );  
-       	 $postterms = get_the_terms( $post->ID,$taxonomy );  
-       	 $current = ($postterms ? array_pop($postterms) : false);  
-       	 $current = ($current ? $current->term_id : 0);  
-       	 ?>  
-      
+
+       	 //Set up the taxonomy object and get terms
+       	 $tax = get_taxonomy($taxonomy);
+       	 $terms = get_terms($taxonomy,array('hide_empty' => 0));
+
+       	 //Name of the form
+       	 $name = 'tax_input[' . $taxonomy . ']';
+
+       	 //Get current and popular terms
+       	 $popular = get_terms( $taxonomy, array( 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );
+       	 $postterms = get_the_terms( $post->ID,$taxonomy );
+       	 $current = ($postterms ? array_pop($postterms) : false);
+       	 $current = ($current ? $current->term_id : 0);
+       	 ?>
+
 		<div id="taxonomy-<?php echo $taxonomy; ?>" class="categorydiv">
 			<!-- Display tabs-->
 			<ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
@@ -97,20 +97,23 @@ class WordPress_Radio_Taxonomy {
 				</ul>
 			</div>
 
-			 <p id="<?php echo $taxonomy; ?>-add" class="">
-				<label class="screen-reader-text" for="new<?php echo $taxonomy; ?>"><?php echo $tax->labels->add_new_item; ?></label>
-				<input type="text" name="new<?php echo $taxonomy; ?>" id="new<?php echo $taxonomy; ?>" class="form-required form-input-tip" value="<?php echo esc_attr( $tax->labels->new_item_name ); ?>" tabindex="3" aria-required="true"/>
-				<input type="button" id="" class="radio-tax-add button" value="<?php echo esc_attr( $tax->labels->add_new_item ); ?>" tabindex="3" />
-				<?php wp_nonce_field( 'radio-tax-add-'.$taxonomy, '_wpnonce_radio-add-tag', false ); ?>
-			</p>
+			<div id="<?php echo $taxonomy; ?>-adder" class="wp-hidden-children">
+				<a id="<?php echo $taxonomy; ?>-add-toggle" href="#<?php echo $taxonomy; ?>-add" class="hide-if-no-js taxonomy-add-new">+ Add <?php echo esc_attr( $tax->label ); ?></a>
+				<p id="<?php echo $taxonomy; ?>-add" class="category-add wp-hidden-child">
+					<label class="screen-reader-text" for="new<?php echo $taxonomy; ?>"><?php echo $tax->labels->add_new_item; ?></label>
+					<input type="text" name="new<?php echo $taxonomy; ?>" id="new<?php echo $taxonomy; ?>" class="form-required form-input-tip" value="" tabindex="3" aria-required="true"/>
+					<input type="button" id="" class="radio-tax-add button" value="<?php echo esc_attr( $tax->labels->add_new_item ); ?>" tabindex="3" />
+					<?php wp_nonce_field( 'radio-tax-add-'.$taxonomy, '_wpnonce_radio-add-tag', false ); ?>
+				</p>
+			</div>
 		</div>
-        <?php  
+        <?php
     }
 
-	 public function admin_script(){  
-		wp_register_script( 'radiotax', get_template_directory_uri() . '/js/radiotax.js', array('jquery'), null, true ); // We specify true here to tell WordPress this script needs to be loaded in the footer  
+	 public function admin_script(){
+		wp_register_script( 'radiotax', get_template_directory_uri() . '/js/radiotax.js', array('jquery'), null, true ); // We specify true here to tell WordPress this script needs to be loaded in the footer
 		wp_localize_script( 'radiotax', 'radio_tax', array('slug'=>self::$taxonomy));
-		wp_enqueue_script( 'radiotax' );  
+		wp_enqueue_script( 'radiotax' );
 	}
 
 	public function ajax_add_term(){
@@ -133,13 +136,13 @@ class WordPress_Radio_Taxonomy {
 			//TODO Error handling
 			exit();
 		}
-	
+
 		$id = $taxonomy.'-'.$tag->term_id;
 		$name = 'tax_input[' . $taxonomy . ']';
 		$value= (is_taxonomy_hierarchical($taxonomy) ? "value='{$tag->term_id}'" : "value='{$term->tag_slug}'");
 
 		$html ='<li id="'.$id.'"><label class="selectit"><input type="radio" id="in-'.$id.'" name="'.$name.'" '.$value.' />'. $tag->name.'</label></li>';
-	
+
 		echo json_encode(array('term'=>$tag->term_id,'html'=>$html));
 		exit();
 	}
